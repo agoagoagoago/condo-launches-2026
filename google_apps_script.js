@@ -133,6 +133,16 @@ function doGet(e) {
 
       sheet.appendRow(row);
 
+      // Send email notification
+      var subject = 'New Prospect: ' + name + ' interested in ' + projects.length + ' project(s)';
+      var body = 'New form submission received!\n\n' +
+                 'Name: ' + name + '\n' +
+                 'Email: ' + email + '\n' +
+                 'Projects interested in:\n- ' + projects.join('\n- ') + '\n\n' +
+                 'Date: ' + date;
+
+      MailApp.sendEmail('lookforadrian@gmail.com', subject, body);
+
       return ContentService
         .createTextOutput(JSON.stringify({success: true, message: 'Data saved successfully'}))
         .setMimeType(ContentService.MimeType.JSON);
