@@ -715,6 +715,125 @@ def generate_html(data):
             color: #666;
             margin: 3px 0 0 0;
         }}
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {{
+            #map {{
+                height: calc(100vh - 280px);
+            }}
+            .title-bar {{
+                left: 10px;
+                right: 10px;
+                padding: 8px 12px;
+            }}
+            .title-bar h1 {{
+                font-size: 14px;
+            }}
+            .title-bar p {{
+                font-size: 9px;
+            }}
+            .filter-panel {{
+                top: auto;
+                bottom: 10px;
+                left: 10px;
+                right: auto;
+                padding: 10px;
+                min-width: auto;
+            }}
+            .filter-panel h3 {{
+                font-size: 12px;
+                margin-bottom: 6px;
+                padding-bottom: 6px;
+            }}
+            .filter-item label {{
+                font-size: 11px;
+            }}
+            .filter-buttons {{
+                margin-top: 6px;
+                padding-top: 6px;
+            }}
+            .filter-buttons button {{
+                padding: 4px 8px;
+                font-size: 10px;
+            }}
+            .legend {{
+                bottom: 10px;
+                right: 10px;
+                padding: 8px 10px;
+            }}
+            .legend h4 {{
+                font-size: 10px;
+                margin-bottom: 4px;
+            }}
+            .legend-item {{
+                font-size: 9px;
+                margin: 2px 0;
+            }}
+            .signup-form {{
+                padding: 20px 15px;
+            }}
+            .signup-form h3 {{
+                font-size: 14px;
+                margin-bottom: 15px;
+            }}
+            .signup-form form {{
+                flex-direction: column;
+                gap: 10px;
+            }}
+            .signup-form input {{
+                width: 100%;
+                max-width: 300px;
+                padding: 10px 14px;
+                font-size: 16px;
+            }}
+            .signup-form .dropdown-container {{
+                width: 100%;
+                max-width: 300px;
+            }}
+            .signup-form .dropdown-trigger {{
+                padding: 10px 14px;
+                font-size: 16px;
+            }}
+            .signup-form .dropdown-menu {{
+                max-height: 200px;
+            }}
+            .signup-form button {{
+                width: 100%;
+                max-width: 300px;
+                padding: 12px 20px;
+                font-size: 16px;
+            }}
+            .tooltip-content {{
+                min-width: 220px;
+            }}
+            .tooltip-content h4 {{
+                font-size: 12px;
+            }}
+            .tooltip-content table {{
+                font-size: 10px;
+            }}
+            .tooltip-content td:first-child {{
+                width: 80px;
+            }}
+        }}
+
+        @media (max-width: 480px) {{
+            #map {{
+                height: calc(100vh - 300px);
+            }}
+            .title-bar h1 {{
+                font-size: 12px;
+            }}
+            .title-bar p {{
+                font-size: 8px;
+            }}
+            .filter-panel {{
+                padding: 8px;
+            }}
+            .legend {{
+                padding: 6px 8px;
+            }}
+        }}
     </style>
 </head>
 <body>
