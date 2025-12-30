@@ -975,7 +975,7 @@ def generate_html(data):
         }});
 
         // Google Apps Script Web App URL - REPLACE WITH YOUR DEPLOYED URL
-        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcNiChzVjkyrP906Pqhcn-rLbRmbqK0pgR07hc7uEC2vN8_weWXJScIGWiDAKaK04e/exec';
 
         // Form submission handler
         async function submitForm(event) {{
