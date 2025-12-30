@@ -700,7 +700,8 @@ def generate_html(data):
 
     <div class="signup-form">
         <h3>Please notify me when it is going to launch</h3>
-        <form id="notify-form">
+        <form action="https://formspree.io/f/lookforadrian@gmail.com" method="POST">
+            <input type="hidden" name="_subject" value="New Condo Launch Notification Request">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <button type="submit">Notify Me</button>
