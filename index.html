@@ -296,10 +296,9 @@
 
     <div class="signup-form">
         <h3>Please notify me when it is going to launch</h3>
-        <form action="https://formspree.io/f/mregdjkq" method="POST">
-            <input type="hidden" name="_subject" value="New Condo Launch Notification Request">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="email" name="email" placeholder="Email" required>
+        <form id="prospect-form" onsubmit="submitForm(event)">
+            <input type="text" id="form-name" name="name" placeholder="Name" required>
+            <input type="email" id="form-email" name="email" placeholder="Email" required>
             <div class="dropdown-container">
                 <div class="dropdown-trigger" onclick="toggleDropdown()">
                     <span id="dropdown-label">Select Projects</span>
@@ -878,6 +877,60 @@
                 document.querySelector('.dropdown-trigger').classList.remove('active');
             }
         });
+
+        // Google Apps Script Web App URL - REPLACE WITH YOUR DEPLOYED URL
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+        // Form submission handler
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('form-name').value;
+            const email = document.getElementById('form-email').value;
+
+            // Get all selected projects
+            const checkedBoxes = document.querySelectorAll('input[name="projects"]:checked');
+            const projects = Array.from(checkedBoxes).map(cb => cb.value);
+
+            if (projects.length === 0) {
+                alert('Please select at least one project.');
+                return;
+            }
+
+            const submitBtn = document.querySelector('.signup-form button');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        projects: projects
+                    })
+                });
+
+                // With no-cors mode, we can't read the response, but the request is sent
+                alert('Thank you! We will notify you when your selected projects are launching.');
+
+                // Reset form
+                document.getElementById('prospect-form').reset();
+                updateDropdownLabel();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error submitting the form. Please try again.');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>

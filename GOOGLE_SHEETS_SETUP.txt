@@ -1,0 +1,81 @@
+SETUP INSTRUCTIONS: Google Sheets "Prospects" Spreadsheet
+=========================================================
+
+Follow these steps to connect the form to a Google Sheet:
+
+STEP 1: Create Google Sheet
+---------------------------
+1. Go to https://sheets.google.com
+2. Create a new spreadsheet
+3. Rename it to "Prospects"
+
+STEP 2: Add the Apps Script
+---------------------------
+1. In Google Sheets, go to Extensions > Apps Script
+2. Delete any existing code in the editor
+3. Copy ALL the code from the file "google_apps_script.js" in this folder
+4. Paste it into the Apps Script editor
+5. Click the Save icon (or Ctrl+S)
+6. Name the project "Prospects Form Handler"
+
+STEP 3: Set Up Headers
+----------------------
+1. In Apps Script, find the function dropdown (top menu bar, says "doPost")
+2. Change it to "setupHeaders"
+3. Click the Run button (play icon)
+4. You'll be asked to authorize - click "Review Permissions"
+5. Select your Google account
+6. Click "Advanced" > "Go to Prospects Form Handler (unsafe)"
+7. Click "Allow"
+8. The headers will be added to your spreadsheet
+
+STEP 4: Deploy as Web App
+-------------------------
+1. Click "Deploy" > "New deployment"
+2. Click the gear icon next to "Select type" > choose "Web app"
+3. Fill in:
+   - Description: "Prospects Form v1"
+   - Execute as: "Me"
+   - Who has access: "Anyone"
+4. Click "Deploy"
+5. COPY THE WEB APP URL - you'll need this!
+   (It looks like: https://script.google.com/macros/s/XXXXX/exec)
+
+STEP 5: Update the Website Code
+-------------------------------
+1. Open build_map.py
+2. Find this line (around line 978):
+   const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+3. Replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' with your actual Web App URL
+4. Run: python build_map.py
+5. Commit and push to GitHub
+
+STEP 6: Test It!
+----------------
+1. Go to your website on Render
+2. Fill out the form with test data
+3. Check your Google Sheet - a new row should appear!
+
+SPREADSHEET COLUMNS
+===================
+The spreadsheet will have these columns:
+- Date: Timestamp of submission
+- Name: Prospect's name
+- Email: Prospect's email
+- [Project columns]: Email appears under each project they selected
+
+Example row:
+Date               | Name      | Email           | Narra Residences | Newport Residences | ...
+Dec 30, 2025 2:30pm| John Doe  | john@email.com | john@email.com   |                    | ...
+
+EXPORTING TO EXCEL
+==================
+To download as Excel file:
+1. In Google Sheets, go to File > Download > Microsoft Excel (.xlsx)
+2. The file will download as "Prospects.xlsx"
+
+TROUBLESHOOTING
+===============
+- If form doesn't submit: Check browser console for errors (F12 > Console)
+- If data doesn't appear: Make sure Web App is deployed with "Anyone" access
+- If you update the script: Create a "New deployment" (don't edit existing)
