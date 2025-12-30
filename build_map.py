@@ -722,7 +722,7 @@ def generate_html(data):
 
     <div class="title-bar">
         <h1>Singapore Condo Launches 2026</h1>
-        <p>Source: URA, Huttons Data Analytics (as of Dec 26, 2025)</p>
+        <p>Source: URA, The Business Times (30 Dec 2025)</p>
     </div>
 
     <div class="filter-panel">
