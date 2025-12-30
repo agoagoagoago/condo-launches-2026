@@ -15,7 +15,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent
 CACHE_FILE = SCRIPT_DIR / "geocode_cache.json"
 DATA_FILE = SCRIPT_DIR / "condo_launches_2026_data.json"
-HTML_FILE = SCRIPT_DIR / "condo_launches_2026_map.html"
+HTML_FILE = SCRIPT_DIR / "index.html"
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 RATE_LIMIT_DELAY = 1.0  # seconds between API requests
 

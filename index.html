@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singapore Condo Launches 2026</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        .filter-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            min-width: 200px;
+        }
+        .filter-panel h3 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            cursor: pointer;
+        }
+        .filter-item input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .filter-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .filter-buttons {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .filter-buttons button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .filter-buttons button:hover {
+            background: #e8e8e8;
+        }
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .legend h4 {
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 4px 0;
+            font-size: 11px;
+        }
+        .tooltip-content {
+            min-width: 280px;
+        }
+        .tooltip-content h4 {
+            margin: 0 0 8px 0;
+            color: #1a1a2e;
+            font-size: 14px;
+            border-bottom: 2px solid #4363d8;
+            padding-bottom: 5px;
+        }
+        .tooltip-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .tooltip-content td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+        .tooltip-content td:first-child {
+            color: #666;
+            width: 100px;
+            font-weight: 500;
+        }
+        .tooltip-content td:last-child {
+            color: #333;
+        }
+        .title-bar {
+            position: absolute;
+            top: 10px;
+            left: 60px;
+            z-index: 1000;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .title-bar h1 {
+            font-size: 18px;
+            color: #1a1a2e;
+            margin: 0;
+        }
+        .title-bar p {
+            font-size: 11px;
+            color: #666;
+            margin: 3px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <div class="title-bar">
+        <h1>Singapore Condo Launches 2026</h1>
+        <p>Source: URA, Huttons Data Analytics (as of Dec 26, 2025)</p>
+    </div>
+
+    <div class="filter-panel">
+        <h3>Filter by Quarter</h3>
+        <div id="filter-list"></div>
+        <div class="filter-buttons">
+            <button onclick="selectAll()">Select All</button>
+            <button onclick="selectNone()">Clear All</button>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h4>Type</h4>
+        <div class="legend-item">
+            <span class="color-dot" style="background-color: #1e3a5f; width: 12px; height: 12px;"></span>
+            Condo
+        </div>
+        <div class="legend-item">
+            <span class="color-dot" style="background-color: #e63946; width: 12px; height: 12px;"></span>
+            EC
+        </div>
+        <h4 style="margin-top: 10px;">Est. No. of Units</h4>
+        <div class="legend-item">
+            <span class="color-dot" style="background-color: #666; width: 8px; height: 8px;"></span>
+            Small (&lt;300)
+        </div>
+        <div class="legend-item">
+            <span class="color-dot" style="background-color: #666; width: 14px; height: 14px;"></span>
+            Medium (300-700)
+        </div>
+        <div class="legend-item">
+            <span class="color-dot" style="background-color: #666; width: 20px; height: 20px;"></span>
+            Large (&gt;700)
+        </div>
+    </div>
+
+    <script>
+        // Embedded condo data
+        const condoData = [
+  {
+    "project": "Narra Residences",
+    "developer": "Santarli Construction, Apex Asia Group, Soon Li Heng Civil Engineering, Kay Lim Realty",
+    "location": "Dairy Farm Walk",
+    "district": "23",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 540,
+    "units_display": "540",
+    "launch_period": "Jan",
+    "lat": 1.3648,
+    "lng": 103.7717,
+    "site_type": "GLS",
+    "sold_in": "Jan-25",
+    "psf_ppr": "$1,020"
+  },
+  {
+    "project": "Newport Residences",
+    "developer": "CDL",
+    "location": "Anson Road",
+    "district": "2",
+    "region": "CCR",
+    "tenure": "Freehold",
+    "units": 246,
+    "units_display": "246",
+    "launch_period": "Jan",
+    "lat": 1.2755,
+    "lng": 103.844,
+    "site_type": "Redevelopment",
+    "sold_in": "-",
+    "psf_ppr": "-"
+  },
+  {
+    "project": "Duet @ Emily",
+    "developer": "ZACD Group",
+    "location": "Emily Road",
+    "district": "9",
+    "region": "CCR",
+    "tenure": "Freehold",
+    "units": 20,
+    "units_display": "20",
+    "launch_period": "Jan/Feb",
+    "lat": 1.2995,
+    "lng": 103.8485,
+    "site_type": "Enbloc",
+    "sold_in": "Mar-21",
+    "psf_ppr": "$1,115"
+  },
+  {
+    "project": "Sophia Meadows",
+    "developer": "Sin Thai Hin Development",
+    "location": "Sophia Road",
+    "district": "9",
+    "region": "CCR",
+    "tenure": "103 years",
+    "units": 41,
+    "units_display": "41",
+    "launch_period": "Feb/Mar",
+    "lat": 1.3015,
+    "lng": 103.848,
+    "site_type": "Enbloc",
+    "sold_in": "Jan-24",
+    "psf_ppr": "$1,172"
+  },
+  {
+    "project": "Pinery Residences",
+    "developer": "Hoi Hup Realty, Sunway Development",
+    "location": "Tampines Street 94",
+    "district": "18",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 585,
+    "units_display": "585",
+    "launch_period": "Q1",
+    "lat": 1.3545,
+    "lng": 103.9565,
+    "site_type": "GLS",
+    "sold_in": "Sept-24",
+    "psf_ppr": "$1,004"
+  },
+  {
+    "project": "Tengah Garden Avenue",
+    "developer": "Hong Leong Holdings, CSC Land Group (Singapore), GuocoLand",
+    "location": "Tengah Garden Avenue",
+    "district": "24",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 860,
+    "units_display": "860",
+    "launch_period": "Mar/Apr",
+    "lat": 1.3635,
+    "lng": 103.7175,
+    "site_type": "GLS",
+    "sold_in": "Jan-25",
+    "psf_ppr": "$821"
+  },
+  {
+    "project": "River Modern",
+    "developer": "GuocoLand",
+    "location": "River Valley Green",
+    "district": "9",
+    "region": "CCR",
+    "tenure": "99 years",
+    "units": 455,
+    "units_display": "455",
+    "launch_period": "Mar/Apr",
+    "lat": 1.2945,
+    "lng": 103.835,
+    "site_type": "GLS",
+    "sold_in": "Feb-25",
+    "psf_ppr": "$1,420"
+  },
+  {
+    "project": "Bayshore Road",
+    "developer": "SingHaiyi Group",
+    "location": "Bayshore Road",
+    "district": "15",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 515,
+    "units_display": "515",
+    "launch_period": "Apr/May",
+    "lat": 1.3055,
+    "lng": 103.9385,
+    "site_type": "GLS",
+    "sold_in": "Mar-25",
+    "psf_ppr": "$1,388"
+  },
+  {
+    "project": "Media Circle (Parcel A)",
+    "developer": "Qingjian Realty, China Communications Construction Company, Hoovason Holding",
+    "location": "Media Circle",
+    "district": "5",
+    "region": "RCR",
+    "tenure": "99 years",
+    "units": 345,
+    "units_display": "345",
+    "launch_period": "Apr/May",
+    "lat": 1.2975,
+    "lng": 103.7885,
+    "site_type": "GLS",
+    "sold_in": "Mar-25",
+    "psf_ppr": "$1,037"
+  },
+  {
+    "project": "Lentor Gardens",
+    "developer": "Kingsford Group",
+    "location": "Lentor Gardens",
+    "district": "26",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 502,
+    "units_display": "502",
+    "launch_period": "May/Jun",
+    "lat": 1.4125,
+    "lng": 103.8375,
+    "site_type": "GLS",
+    "sold_in": "Apr-25",
+    "psf_ppr": "$920"
+  },
+  {
+    "project": "Dunearn Road",
+    "developer": "CSC Land Group, Sekisui House, Frasers Property",
+    "location": "Dunearn Road",
+    "district": "11",
+    "region": "CCR",
+    "tenure": "99 years",
+    "units": 380,
+    "units_display": "380",
+    "launch_period": "Q2/Q3",
+    "lat": 1.3245,
+    "lng": 103.8095,
+    "site_type": "GLS",
+    "sold_in": "Jun-25",
+    "psf_ppr": "$1,410"
+  },
+  {
+    "project": "Holland Link",
+    "developer": "Sim Lian",
+    "location": "Holland Link",
+    "district": "10",
+    "region": "CCR",
+    "tenure": "99 years",
+    "units": 230,
+    "units_display": "230",
+    "launch_period": "Q1",
+    "lat": 1.3105,
+    "lng": 103.7895,
+    "site_type": "GLS",
+    "sold_in": "Jul-25",
+    "psf_ppr": "$1,432"
+  },
+  {
+    "project": "Lakeside Drive",
+    "developer": "CDL",
+    "location": "Lakeside Drive",
+    "district": "22",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 575,
+    "units_display": "575",
+    "launch_period": "Jul/Aug",
+    "lat": 1.3395,
+    "lng": 103.7205,
+    "site_type": "GLS",
+    "sold_in": "Jun-25",
+    "psf_ppr": "$1,132"
+  },
+  {
+    "project": "Chencharu Close",
+    "developer": "Evia MCS, Gamuda, Ho Lee Group",
+    "location": "Chencharu Close",
+    "district": "27",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 875,
+    "units_display": "875",
+    "launch_period": "Sep",
+    "lat": 1.4235,
+    "lng": 103.8125,
+    "site_type": "GLS",
+    "sold_in": "Sept-25",
+    "psf_ppr": "$980"
+  },
+  {
+    "project": "Chuan Grove",
+    "developer": "Sing Holdings, Sunway Developments",
+    "location": "Chuan Grove",
+    "district": "19",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 1055,
+    "units_display": "1,055",
+    "launch_period": "Q3",
+    "lat": 1.351,
+    "lng": 103.867,
+    "site_type": "GLS",
+    "sold_in": "Sept-25",
+    "psf_ppr": "$1,376"
+  },
+  {
+    "project": "Dorset Road",
+    "developer": "UOL, SingLand, Kheng Leong",
+    "location": "Dorset Road",
+    "district": "8",
+    "region": "RCR",
+    "tenure": "99 years",
+    "units": 428,
+    "units_display": "428",
+    "launch_period": "Oct",
+    "lat": 1.3125,
+    "lng": 103.8565,
+    "site_type": "GLS",
+    "sold_in": "Oct-25",
+    "psf_ppr": "$1,338"
+  },
+  {
+    "project": "Former Thomson View condo",
+    "developer": "UOL, SingLand, CapitaLand",
+    "location": "Bright Hill Drive",
+    "district": "20",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 1240,
+    "units_display": "1,240",
+    "launch_period": "Q4",
+    "lat": 1.362,
+    "lng": 103.8355,
+    "site_type": "Enbloc",
+    "sold_in": "Oct-24",
+    "psf_ppr": "$1,178"
+  },
+  {
+    "project": "Upper Thomson Road (Parcel A)",
+    "developer": "Wee Hur",
+    "location": "Upper Thomson Road",
+    "district": "26",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 595,
+    "units_display": "595",
+    "launch_period": "Q4",
+    "lat": 1.4025,
+    "lng": 103.8365,
+    "site_type": "GLS",
+    "sold_in": "Oct-25",
+    "psf_ppr": "$1,062"
+  },
+  {
+    "project": "Coastal Cabana",
+    "developer": "Qingjian Realty, Forsea Holdings, ZACD Group, Jianan Capital",
+    "location": "Jalan Loyang Besar",
+    "district": "17",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 748,
+    "units_display": "748",
+    "launch_period": "Dec 2025",
+    "lat": 1.3725,
+    "lng": 103.962,
+    "site_type": "GLS",
+    "sold_in": "Aug-24",
+    "psf_ppr": "$705"
+  },
+  {
+    "project": "Rivelle Tampines",
+    "developer": "Sim Lian Group",
+    "location": "Tampines Street 95",
+    "district": "18",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 572,
+    "units_display": "572",
+    "launch_period": "Q1 2026",
+    "lat": 1.352,
+    "lng": 103.9545,
+    "site_type": "GLS",
+    "sold_in": "Oct-24",
+    "psf_ppr": "$768"
+  },
+  {
+    "project": "Woodlands Drive",
+    "developer": "CDL",
+    "location": "Woodlands Drive",
+    "district": "25",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 420,
+    "units_display": "420",
+    "launch_period": "Q4 2026",
+    "lat": 1.435,
+    "lng": 103.7865,
+    "site_type": "GLS",
+    "sold_in": "Oct-25",
+    "psf_ppr": "$782"
+  },
+  {
+    "project": "Sembawang Road",
+    "developer": "JBE Holdings",
+    "location": "Sembawang Road",
+    "district": "27",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 265,
+    "units_display": "265",
+    "launch_period": "Q4 2026",
+    "lat": 1.442,
+    "lng": 103.8205,
+    "site_type": "GLS",
+    "sold_in": "Sept-25",
+    "psf_ppr": "$692"
+  },
+  {
+    "project": "Senja Close",
+    "developer": "CDL",
+    "location": "Senja Close",
+    "district": "23",
+    "region": "OCR",
+    "tenure": "99 years",
+    "units": 295,
+    "units_display": "295",
+    "launch_period": "Q4 2026",
+    "lat": 1.3785,
+    "lng": 103.7625,
+    "site_type": "GLS",
+    "sold_in": "Aug-25",
+    "psf_ppr": "$771"
+  }
+];
+
+        // Colors for markers
+        const condoColor = '#1e3a5f';  // dark blue for condos
+        const ecColor = '#e63946';      // red for ECs
+
+        // EC projects from Part2
+        const ecProjects = ['Coastal Cabana', 'Rivelle Tampines', 'Woodlands Drive', 'Sembawang Road', 'Senja Close'];
+
+        // Map launch periods to quarters
+        function getQuarter(period) {
+            const q1 = ['Jan', 'Jan/Feb', 'Feb/Mar', 'Q1', 'Q1 2026'];
+            const q2 = ['Mar/Apr', 'Apr/May', 'May/Jun'];
+            const q3 = ['Q2/Q3', 'Jul/Aug', 'Q3', 'Sep'];
+            const q4 = ['Oct', 'Q4', 'Q4 2026', 'Dec 2025'];
+            if (q1.includes(period)) return 'Q1';
+            if (q2.includes(period)) return 'Q2';
+            if (q3.includes(period)) return 'Q3';
+            if (q4.includes(period)) return 'Q4';
+            return 'Q4';
+        }
+
+        // Initialize map centered on Singapore
+        const map = L.map('map').setView([1.3521, 103.8198], 12);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Store markers by launch period
+        const markerGroups = {};
+        const markers = [];
+
+        // Create markers for each condo
+        condoData.forEach(condo => {
+            // Calculate radius based on units (min 6, max 20)
+            const minUnits = 20;
+            const maxUnits = 1240;
+            const minRadius = 6;
+            const maxRadius = 20;
+            const normalizedUnits = (condo.units - minUnits) / (maxUnits - minUnits);
+            const radius = minRadius + normalizedUnits * (maxRadius - minRadius);
+
+            // Use red for EC projects, dark blue for condos
+            const isEC = ecProjects.includes(condo.project);
+            const markerColor = isEC ? ecColor : condoColor;
+
+            const marker = L.circleMarker([condo.lat, condo.lng], {
+                radius: radius,
+                fillColor: markerColor,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            });
+
+            // Create tooltip content
+            const tooltipContent = `
+                <div class="tooltip-content">
+                    <h4>${condo.project}</h4>
+                    <table>
+                        <tr><td>Developer:</td><td>${condo.developer}</td></tr>
+                        <tr><td>Location:</td><td>${condo.location}</td></tr>
+                        <tr><td>District:</td><td>${condo.district}</td></tr>
+                        <tr><td>Region:</td><td>${condo.region}</td></tr>
+                        <tr><td>Tenure:</td><td>${condo.tenure}</td></tr>
+                        <tr><td>Est. Units:</td><td>${condo.units_display}</td></tr>
+                        <tr><td>Est. Launch:</td><td>${condo.launch_period}</td></tr>
+                        <tr><td>Type:</td><td>${condo.site_type}</td></tr>
+                        <tr><td>Sold In:</td><td>${condo.sold_in}</td></tr>
+                        <tr><td>S$ psf ppr:</td><td>${condo.psf_ppr}</td></tr>
+                    </table>
+                </div>
+            `;
+
+            marker.bindTooltip(tooltipContent, {
+                direction: 'top',
+                offset: [0, -radius],
+                className: 'condo-tooltip'
+            });
+
+            marker.addTo(map);
+
+            // Group by quarter
+            const quarter = getQuarter(condo.launch_period);
+            if (!markerGroups[quarter]) {
+                markerGroups[quarter] = [];
+            }
+            markerGroups[quarter].push(marker);
+        });
+
+        // Fit bounds to show all markers
+        const bounds = L.latLngBounds(condoData.map(c => [c.lat, c.lng]));
+        map.fitBounds(bounds.pad(0.1));
+
+        // Build filter UI with quarters only
+        const filterList = document.getElementById('filter-list');
+        const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+
+        quarters.forEach(quarter => {
+            const count = condoData.filter(c => getQuarter(c.launch_period) === quarter).length;
+            const div = document.createElement('div');
+            div.className = 'filter-item';
+            div.innerHTML = `
+                <input type="checkbox" id="filter-${quarter}" checked onchange="toggleQuarter('${quarter}')">
+                <label for="filter-${quarter}">
+                    ${quarter} (${count})
+                </label>
+            `;
+            filterList.appendChild(div);
+        });
+
+        // Filter functions
+        function toggleQuarter(quarter) {
+            const checkbox = document.getElementById(`filter-${quarter}`);
+            const markersInGroup = markerGroups[quarter] || [];
+            markersInGroup.forEach(marker => {
+                if (checkbox.checked) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            });
+        }
+
+        function selectAll() {
+            quarters.forEach(quarter => {
+                const checkbox = document.getElementById(`filter-${quarter}`);
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                    toggleQuarter(quarter);
+                }
+            });
+        }
+
+        function selectNone() {
+            quarters.forEach(quarter => {
+                const checkbox = document.getElementById(`filter-${quarter}`);
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    toggleQuarter(quarter);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
