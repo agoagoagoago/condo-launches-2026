@@ -73,11 +73,81 @@ function doPost(e) {
   }
 }
 
-// Handle CORS preflight requests
+// Handle GET requests with form data
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({status: 'OK', message: 'Prospects Form API is running'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    // Check if this is a form submission (has parameters)
+    if (e.parameter && e.parameter.name) {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+      var date = new Date().toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      var name = e.parameter.name || '';
+      var email = e.parameter.email || '';
+      var projectsStr = e.parameter.projects || '';
+      var projects = projectsStr ? projectsStr.split(',') : [];
+
+      // All project names (must match exactly with form values)
+      var allProjects = [
+        'Narra Residences',
+        'Newport Residences',
+        'Duet @ Emily',
+        'Sophia Meadows',
+        'Pinery Residences',
+        'Tengah Garden Avenue',
+        'River Modern',
+        'Bayshore Road',
+        'Media Circle (Parcel A)',
+        'Lentor Gardens',
+        'Dunearn Road',
+        'Holland Link',
+        'Lakeside Drive',
+        'Chencharu Close',
+        'Chuan Grove',
+        'Dorset Road',
+        'Former Thomson View condo',
+        'Upper Thomson Road (Parcel A)',
+        'Coastal Cabana (EC)',
+        'Rivelle Tampines (EC)',
+        'Woodlands Drive (EC)',
+        'Sembawang Road (EC)',
+        'Senja Close (EC)'
+      ];
+
+      // Build the row: Date, Name, Email, then email under each selected project
+      var row = [date, name, email];
+
+      allProjects.forEach(function(project) {
+        if (projects.includes(project)) {
+          row.push(email);
+        } else {
+          row.push('');
+        }
+      });
+
+      sheet.appendRow(row);
+
+      return ContentService
+        .createTextOutput(JSON.stringify({success: true, message: 'Data saved successfully'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Default response for status check
+    return ContentService
+      .createTextOutput(JSON.stringify({status: 'OK', message: 'Prospects Form API is running'}))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 // Run this function ONCE to set up the header row

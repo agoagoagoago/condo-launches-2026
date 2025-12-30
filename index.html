@@ -879,7 +879,7 @@
         });
 
         // Google Apps Script Web App URL - REPLACE WITH YOUR DEPLOYED URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcNiChzVjkyrP906Pqhcn-rLbRmbqK0pgR07hc7uEC2vN8_weWXJScIGWiDAKaK04e/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIgtXye5dE694FmzaVbFnqPmQh-Mh62CuaUmHzO_3ie7rQ03mB3NPUC0tI-XojbZKy/exec';
 
         // Form submission handler
         async function submitForm(event) {
@@ -903,20 +903,17 @@
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        projects: projects
-                    })
+                // Build URL with query parameters
+                const params = new URLSearchParams();
+                params.append('name', name);
+                params.append('email', email);
+                params.append('projects', projects.join(','));
+
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?' + params.toString(), {
+                    method: 'GET',
+                    mode: 'no-cors'
                 });
 
-                // With no-cors mode, we can't read the response, but the request is sent
                 alert('Thank you! We will notify you when your selected projects are launching.');
 
                 // Reset form

@@ -999,20 +999,17 @@ def generate_html(data):
             submitBtn.disabled = true;
 
             try {{
-                const response = await fetch(GOOGLE_SCRIPT_URL, {{
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {{
-                        'Content-Type': 'application/json',
-                    }},
-                    body: JSON.stringify({{
-                        name: name,
-                        email: email,
-                        projects: projects
-                    }})
+                // Build URL with query parameters
+                const params = new URLSearchParams();
+                params.append('name', name);
+                params.append('email', email);
+                params.append('projects', projects.join(','));
+
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?' + params.toString(), {{
+                    method: 'GET',
+                    mode: 'no-cors'
                 }});
 
-                // With no-cors mode, we can't read the response, but the request is sent
                 alert('Thank you! We will notify you when your selected projects are launching.');
 
                 // Reset form
