@@ -482,7 +482,7 @@ def generate_html(data):
         }}
         #map {{
             width: 100%;
-            height: calc(100vh - 180px);
+            height: calc(100vh - 240px);
         }}
         .signup-form {{
             background: #1e3a5f;
@@ -698,45 +698,29 @@ def generate_html(data):
         .tooltip-content td:last-child {{
             color: #333;
         }}
-        .title-bar {{
-            position: absolute;
-            top: 10px;
-            left: 60px;
-            z-index: 1000;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        .footer {{
+            background: #0d1b2a;
+            padding: 20px;
+            text-align: center;
         }}
-        .title-bar h1 {{
-            font-size: 18px;
-            color: #1a1a2e;
-            margin: 0;
+        .footer h2 {{
+            font-size: 16px;
+            color: white;
+            margin: 0 0 5px 0;
         }}
-        .title-bar p {{
+        .footer p {{
             font-size: 11px;
-            color: #666;
-            margin: 3px 0 0 0;
+            color: #999;
+            margin: 0;
         }}
 
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {{
             #map {{
-                height: calc(100vh - 280px);
-            }}
-            .title-bar {{
-                left: 10px;
-                right: 10px;
-                padding: 8px 12px;
-            }}
-            .title-bar h1 {{
-                font-size: 14px;
-            }}
-            .title-bar p {{
-                font-size: 9px;
+                height: calc(100vh - 320px);
             }}
             .filter-panel {{
-                top: 60px;
+                top: 10px;
                 bottom: auto;
                 left: auto;
                 right: 10px;
@@ -830,17 +814,20 @@ def generate_html(data):
             .tooltip-content td:first-child {{
                 width: 80px;
             }}
+            .footer {{
+                padding: 15px;
+            }}
+            .footer h2 {{
+                font-size: 14px;
+            }}
+            .footer p {{
+                font-size: 10px;
+            }}
         }}
 
         @media (max-width: 480px) {{
             #map {{
-                height: calc(100vh - 300px);
-            }}
-            .title-bar h1 {{
-                font-size: 12px;
-            }}
-            .title-bar p {{
-                font-size: 8px;
+                height: calc(100vh - 340px);
             }}
             .filter-panel {{
                 padding: 8px;
@@ -848,16 +835,17 @@ def generate_html(data):
             .legend {{
                 padding: 6px 8px;
             }}
+            .footer {{
+                padding: 12px;
+            }}
+            .footer h2 {{
+                font-size: 12px;
+            }}
         }}
     </style>
 </head>
 <body>
     <div id="map"></div>
-
-    <div class="title-bar">
-        <h1>Singapore Condo Launches 2026</h1>
-        <p>Source: URA, The Business Times (30 Dec 2025)</p>
-    </div>
 
     <div class="filter-panel" id="filter-panel">
         <h3 onclick="toggleFilterPanel()">Filter by Quarter</h3>
@@ -932,6 +920,11 @@ def generate_html(data):
             </div>
             <button type="submit">Notify Me</button>
         </form>
+    </div>
+
+    <div class="footer">
+        <h2>Singapore Condo Launches 2026</h2>
+        <p>Source: URA, The Business Times (30 Dec 2025)</p>
     </div>
 
     <script>
