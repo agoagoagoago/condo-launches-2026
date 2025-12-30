@@ -526,16 +526,51 @@ def generate_html(data):
         .signup-form button:hover {{
             background: #c62836;
         }}
-        .signup-form .project-select {{
+        .signup-form .dropdown-container {{
+            position: relative;
+            width: 220px;
+        }}
+        .signup-form .dropdown-trigger {{
+            background: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+        .signup-form .dropdown-trigger:after {{
+            content: '▼';
+            font-size: 10px;
+        }}
+        .signup-form .dropdown-trigger.active:after {{
+            content: '▲';
+        }}
+        .signup-form .dropdown-menu {{
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
             background: white;
             border-radius: 6px;
             padding: 10px 15px;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
-            width: 220px;
+            width: 100%;
             text-align: left;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+            z-index: 1001;
         }}
-        .signup-form .project-select label {{
+        .signup-form .dropdown-menu.show {{
+            display: block;
+        }}
+        .signup-form .dropdown-menu label {{
             display: flex;
             align-items: center;
             padding: 6px 0;
@@ -543,17 +578,14 @@ def generate_html(data):
             color: #333;
             cursor: pointer;
         }}
-        .signup-form .project-select input[type="checkbox"] {{
+        .signup-form .dropdown-menu label:hover {{
+            background: #f5f5f5;
+        }}
+        .signup-form .dropdown-menu input[type="checkbox"] {{
             margin-right: 10px;
             width: 16px;
             height: 16px;
             cursor: pointer;
-        }}
-        .signup-form .project-select-title {{
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 8px;
-            display: block;
         }}
         .filter-panel {{
             position: absolute;
@@ -733,31 +765,35 @@ def generate_html(data):
             <input type="hidden" name="_subject" value="New Condo Launch Notification Request">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
-            <div class="project-select">
-                <span class="project-select-title">Select Projects (tick all that apply)</span>
-                <label><input type="checkbox" name="projects" value="Narra Residences"> Narra Residences</label>
-                <label><input type="checkbox" name="projects" value="Newport Residences"> Newport Residences</label>
-                <label><input type="checkbox" name="projects" value="Duet @ Emily"> Duet @ Emily</label>
-                <label><input type="checkbox" name="projects" value="Sophia Meadows"> Sophia Meadows</label>
-                <label><input type="checkbox" name="projects" value="Pinery Residences"> Pinery Residences</label>
-                <label><input type="checkbox" name="projects" value="Tengah Garden Avenue"> Tengah Garden Avenue</label>
-                <label><input type="checkbox" name="projects" value="River Modern"> River Modern</label>
-                <label><input type="checkbox" name="projects" value="Bayshore Road"> Bayshore Road</label>
-                <label><input type="checkbox" name="projects" value="Media Circle (Parcel A)"> Media Circle (Parcel A)</label>
-                <label><input type="checkbox" name="projects" value="Lentor Gardens"> Lentor Gardens</label>
-                <label><input type="checkbox" name="projects" value="Dunearn Road"> Dunearn Road</label>
-                <label><input type="checkbox" name="projects" value="Holland Link"> Holland Link</label>
-                <label><input type="checkbox" name="projects" value="Lakeside Drive"> Lakeside Drive</label>
-                <label><input type="checkbox" name="projects" value="Chencharu Close"> Chencharu Close</label>
-                <label><input type="checkbox" name="projects" value="Chuan Grove"> Chuan Grove</label>
-                <label><input type="checkbox" name="projects" value="Dorset Road"> Dorset Road</label>
-                <label><input type="checkbox" name="projects" value="Former Thomson View condo"> Former Thomson View condo</label>
-                <label><input type="checkbox" name="projects" value="Upper Thomson Road (Parcel A)"> Upper Thomson Road (Parcel A)</label>
-                <label><input type="checkbox" name="projects" value="Coastal Cabana (EC)"> Coastal Cabana (EC)</label>
-                <label><input type="checkbox" name="projects" value="Rivelle Tampines (EC)"> Rivelle Tampines (EC)</label>
-                <label><input type="checkbox" name="projects" value="Woodlands Drive (EC)"> Woodlands Drive (EC)</label>
-                <label><input type="checkbox" name="projects" value="Sembawang Road (EC)"> Sembawang Road (EC)</label>
-                <label><input type="checkbox" name="projects" value="Senja Close (EC)"> Senja Close (EC)</label>
+            <div class="dropdown-container">
+                <div class="dropdown-trigger" onclick="toggleDropdown()">
+                    <span id="dropdown-label">Select Projects</span>
+                </div>
+                <div class="dropdown-menu" id="project-dropdown">
+                    <label><input type="checkbox" name="projects" value="Narra Residences" onchange="updateDropdownLabel()"> Narra Residences</label>
+                    <label><input type="checkbox" name="projects" value="Newport Residences" onchange="updateDropdownLabel()"> Newport Residences</label>
+                    <label><input type="checkbox" name="projects" value="Duet @ Emily" onchange="updateDropdownLabel()"> Duet @ Emily</label>
+                    <label><input type="checkbox" name="projects" value="Sophia Meadows" onchange="updateDropdownLabel()"> Sophia Meadows</label>
+                    <label><input type="checkbox" name="projects" value="Pinery Residences" onchange="updateDropdownLabel()"> Pinery Residences</label>
+                    <label><input type="checkbox" name="projects" value="Tengah Garden Avenue" onchange="updateDropdownLabel()"> Tengah Garden Avenue</label>
+                    <label><input type="checkbox" name="projects" value="River Modern" onchange="updateDropdownLabel()"> River Modern</label>
+                    <label><input type="checkbox" name="projects" value="Bayshore Road" onchange="updateDropdownLabel()"> Bayshore Road</label>
+                    <label><input type="checkbox" name="projects" value="Media Circle (Parcel A)" onchange="updateDropdownLabel()"> Media Circle (Parcel A)</label>
+                    <label><input type="checkbox" name="projects" value="Lentor Gardens" onchange="updateDropdownLabel()"> Lentor Gardens</label>
+                    <label><input type="checkbox" name="projects" value="Dunearn Road" onchange="updateDropdownLabel()"> Dunearn Road</label>
+                    <label><input type="checkbox" name="projects" value="Holland Link" onchange="updateDropdownLabel()"> Holland Link</label>
+                    <label><input type="checkbox" name="projects" value="Lakeside Drive" onchange="updateDropdownLabel()"> Lakeside Drive</label>
+                    <label><input type="checkbox" name="projects" value="Chencharu Close" onchange="updateDropdownLabel()"> Chencharu Close</label>
+                    <label><input type="checkbox" name="projects" value="Chuan Grove" onchange="updateDropdownLabel()"> Chuan Grove</label>
+                    <label><input type="checkbox" name="projects" value="Dorset Road" onchange="updateDropdownLabel()"> Dorset Road</label>
+                    <label><input type="checkbox" name="projects" value="Former Thomson View condo" onchange="updateDropdownLabel()"> Former Thomson View condo</label>
+                    <label><input type="checkbox" name="projects" value="Upper Thomson Road (Parcel A)" onchange="updateDropdownLabel()"> Upper Thomson Road (Parcel A)</label>
+                    <label><input type="checkbox" name="projects" value="Coastal Cabana (EC)" onchange="updateDropdownLabel()"> Coastal Cabana (EC)</label>
+                    <label><input type="checkbox" name="projects" value="Rivelle Tampines (EC)" onchange="updateDropdownLabel()"> Rivelle Tampines (EC)</label>
+                    <label><input type="checkbox" name="projects" value="Woodlands Drive (EC)" onchange="updateDropdownLabel()"> Woodlands Drive (EC)</label>
+                    <label><input type="checkbox" name="projects" value="Sembawang Road (EC)" onchange="updateDropdownLabel()"> Sembawang Road (EC)</label>
+                    <label><input type="checkbox" name="projects" value="Senja Close (EC)" onchange="updateDropdownLabel()"> Senja Close (EC)</label>
+                </div>
             </div>
             <button type="submit">Notify Me</button>
         </form>
@@ -911,6 +947,33 @@ def generate_html(data):
                 }}
             }});
         }}
+
+        // Dropdown functions
+        function toggleDropdown() {{
+            const dropdown = document.getElementById('project-dropdown');
+            const trigger = document.querySelector('.dropdown-trigger');
+            dropdown.classList.toggle('show');
+            trigger.classList.toggle('active');
+        }}
+
+        function updateDropdownLabel() {{
+            const checked = document.querySelectorAll('input[name="projects"]:checked');
+            const label = document.getElementById('dropdown-label');
+            if (checked.length === 0) {{
+                label.textContent = 'Select Projects';
+            }} else {{
+                label.textContent = checked.length + ' project(s) selected';
+            }}
+        }}
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {{
+            const container = document.querySelector('.dropdown-container');
+            if (container && !container.contains(e.target)) {{
+                document.getElementById('project-dropdown').classList.remove('show');
+                document.querySelector('.dropdown-trigger').classList.remove('active');
+            }}
+        }});
     </script>
 </body>
 </html>
