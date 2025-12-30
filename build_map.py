@@ -1198,6 +1198,21 @@ def generate_html(data):
             }}
         }}
     </script>
+
+    <!-- Default Statcounter code for New Launch 2026 http://newcondo2026.online -->
+    <script type="text/javascript">
+    var sc_project=13195467;
+    var sc_invisible=1;
+    var sc_security="bb43dae8";
+    </script>
+    <script type="text/javascript"
+    src="https://www.statcounter.com/counter/counter.js" async></script>
+    <noscript><div class="statcounter"><a title="Web Analytics"
+    href="https://statcounter.com/" target="_blank"><img class="statcounter"
+    src="https://c.statcounter.com/13195467/0/bb43dae8/1/" alt="Web Analytics"
+    referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+    <!-- End of Statcounter Code -->
+
 </body>
 </html>
 '''
