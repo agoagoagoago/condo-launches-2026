@@ -526,16 +526,34 @@ def generate_html(data):
         .signup-form button:hover {{
             background: #c62836;
         }}
-        .signup-form select {{
-            padding: 12px 16px;
-            border: none;
+        .signup-form .project-select {{
+            background: white;
             border-radius: 6px;
-            font-size: 14px;
-            width: 220px;
+            padding: 10px 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 280px;
+            text-align: left;
+        }}
+        .signup-form .project-select label {{
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+            color: #333;
             cursor: pointer;
         }}
-        .signup-form select:focus {{
-            outline: 2px solid #4a9eff;
+        .signup-form .project-select input[type="checkbox"] {{
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }}
+        .signup-form .project-select-title {{
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: block;
         }}
         .filter-panel {{
             position: absolute;
@@ -715,32 +733,32 @@ def generate_html(data):
             <input type="hidden" name="_subject" value="New Condo Launch Notification Request">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
-            <select name="project" required>
-                <option value="" disabled selected>Select Project</option>
-                <option value="Narra Residences">Narra Residences</option>
-                <option value="Newport Residences">Newport Residences</option>
-                <option value="Duet @ Emily">Duet @ Emily</option>
-                <option value="Sophia Meadows">Sophia Meadows</option>
-                <option value="Pinery Residences">Pinery Residences</option>
-                <option value="Tengah Garden Avenue">Tengah Garden Avenue</option>
-                <option value="River Modern">River Modern</option>
-                <option value="Bayshore Road">Bayshore Road</option>
-                <option value="Media Circle (Parcel A)">Media Circle (Parcel A)</option>
-                <option value="Lentor Gardens">Lentor Gardens</option>
-                <option value="Dunearn Road">Dunearn Road</option>
-                <option value="Holland Link">Holland Link</option>
-                <option value="Lakeside Drive">Lakeside Drive</option>
-                <option value="Chencharu Close">Chencharu Close</option>
-                <option value="Chuan Grove">Chuan Grove</option>
-                <option value="Dorset Road">Dorset Road</option>
-                <option value="Former Thomson View condo">Former Thomson View condo</option>
-                <option value="Upper Thomson Road (Parcel A)">Upper Thomson Road (Parcel A)</option>
-                <option value="Coastal Cabana (EC)">Coastal Cabana (EC)</option>
-                <option value="Rivelle Tampines (EC)">Rivelle Tampines (EC)</option>
-                <option value="Woodlands Drive (EC)">Woodlands Drive (EC)</option>
-                <option value="Sembawang Road (EC)">Sembawang Road (EC)</option>
-                <option value="Senja Close (EC)">Senja Close (EC)</option>
-            </select>
+            <div class="project-select">
+                <span class="project-select-title">Select Projects (tick all that apply)</span>
+                <label><input type="checkbox" name="projects" value="Narra Residences"> Narra Residences</label>
+                <label><input type="checkbox" name="projects" value="Newport Residences"> Newport Residences</label>
+                <label><input type="checkbox" name="projects" value="Duet @ Emily"> Duet @ Emily</label>
+                <label><input type="checkbox" name="projects" value="Sophia Meadows"> Sophia Meadows</label>
+                <label><input type="checkbox" name="projects" value="Pinery Residences"> Pinery Residences</label>
+                <label><input type="checkbox" name="projects" value="Tengah Garden Avenue"> Tengah Garden Avenue</label>
+                <label><input type="checkbox" name="projects" value="River Modern"> River Modern</label>
+                <label><input type="checkbox" name="projects" value="Bayshore Road"> Bayshore Road</label>
+                <label><input type="checkbox" name="projects" value="Media Circle (Parcel A)"> Media Circle (Parcel A)</label>
+                <label><input type="checkbox" name="projects" value="Lentor Gardens"> Lentor Gardens</label>
+                <label><input type="checkbox" name="projects" value="Dunearn Road"> Dunearn Road</label>
+                <label><input type="checkbox" name="projects" value="Holland Link"> Holland Link</label>
+                <label><input type="checkbox" name="projects" value="Lakeside Drive"> Lakeside Drive</label>
+                <label><input type="checkbox" name="projects" value="Chencharu Close"> Chencharu Close</label>
+                <label><input type="checkbox" name="projects" value="Chuan Grove"> Chuan Grove</label>
+                <label><input type="checkbox" name="projects" value="Dorset Road"> Dorset Road</label>
+                <label><input type="checkbox" name="projects" value="Former Thomson View condo"> Former Thomson View condo</label>
+                <label><input type="checkbox" name="projects" value="Upper Thomson Road (Parcel A)"> Upper Thomson Road (Parcel A)</label>
+                <label><input type="checkbox" name="projects" value="Coastal Cabana (EC)"> Coastal Cabana (EC)</label>
+                <label><input type="checkbox" name="projects" value="Rivelle Tampines (EC)"> Rivelle Tampines (EC)</label>
+                <label><input type="checkbox" name="projects" value="Woodlands Drive (EC)"> Woodlands Drive (EC)</label>
+                <label><input type="checkbox" name="projects" value="Sembawang Road (EC)"> Sembawang Road (EC)</label>
+                <label><input type="checkbox" name="projects" value="Senja Close (EC)"> Senja Close (EC)</label>
+            </div>
             <button type="submit">Notify Me</button>
         </form>
     </div>
