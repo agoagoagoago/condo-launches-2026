@@ -532,7 +532,7 @@ def generate_html(data):
             padding: 10px 15px;
             max-height: 200px;
             overflow-y: auto;
-            width: 280px;
+            width: 220px;
             text-align: left;
         }}
         .signup-form .project-select label {{
