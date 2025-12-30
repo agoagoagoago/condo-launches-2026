@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: condo-launches-2026
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /condo_launches_2026_map.html
