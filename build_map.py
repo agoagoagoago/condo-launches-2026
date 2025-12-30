@@ -647,6 +647,9 @@ def generate_html(data):
         .filter-buttons button:hover {{
             background: #e8e8e8;
         }}
+        .filter-content {{
+            display: block;
+        }}
         .legend {{
             position: absolute;
             bottom: 20px;
@@ -733,17 +736,39 @@ def generate_html(data):
                 font-size: 9px;
             }}
             .filter-panel {{
-                top: auto;
-                bottom: 10px;
-                left: 10px;
-                right: auto;
-                padding: 10px;
+                top: 60px;
+                bottom: auto;
+                left: auto;
+                right: 10px;
+                padding: 8px;
                 min-width: auto;
+                max-height: none;
+                overflow: visible;
+            }}
+            .filter-panel .filter-content {{
+                display: none;
+            }}
+            .filter-panel.expanded .filter-content {{
+                display: block;
             }}
             .filter-panel h3 {{
-                font-size: 12px;
+                font-size: 11px;
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+                cursor: pointer;
+            }}
+            .filter-panel h3:after {{
+                content: ' ▼';
+                font-size: 8px;
+            }}
+            .filter-panel.expanded h3:after {{
+                content: ' ▲';
+            }}
+            .filter-panel.expanded h3 {{
                 margin-bottom: 6px;
                 padding-bottom: 6px;
+                border-bottom: 1px solid #eee;
             }}
             .filter-item label {{
                 font-size: 11px;
@@ -757,17 +782,7 @@ def generate_html(data):
                 font-size: 10px;
             }}
             .legend {{
-                bottom: 10px;
-                right: 10px;
-                padding: 8px 10px;
-            }}
-            .legend h4 {{
-                font-size: 10px;
-                margin-bottom: 4px;
-            }}
-            .legend-item {{
-                font-size: 9px;
-                margin: 2px 0;
+                display: none;
             }}
             .signup-form {{
                 padding: 20px 15px;
@@ -844,12 +859,14 @@ def generate_html(data):
         <p>Source: URA, The Business Times (30 Dec 2025)</p>
     </div>
 
-    <div class="filter-panel">
-        <h3>Filter by Quarter</h3>
-        <div id="filter-list"></div>
-        <div class="filter-buttons">
-            <button onclick="selectAll()">Select All</button>
-            <button onclick="selectNone()">Clear All</button>
+    <div class="filter-panel" id="filter-panel">
+        <h3 onclick="toggleFilterPanel()">Filter by Quarter</h3>
+        <div class="filter-content">
+            <div id="filter-list"></div>
+            <div class="filter-buttons">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="selectNone()">Clear All</button>
+            </div>
         </div>
     </div>
 
@@ -1064,6 +1081,11 @@ def generate_html(data):
                     toggleQuarter(quarter);
                 }}
             }});
+        }}
+
+        // Toggle filter panel on mobile
+        function toggleFilterPanel() {{
+            document.getElementById('filter-panel').classList.toggle('expanded');
         }}
 
         // Dropdown functions
